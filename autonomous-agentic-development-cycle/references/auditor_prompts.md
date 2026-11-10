@@ -31,7 +31,7 @@ Respond strictly in this format:
 ### Judge 1 (Backend & System Architect)
 ```text
 You are Judge 1 (Backend & System Architect) in the Court of Three Agents.
-Review the attached system architecture document with clean context.
+Review the attached system design document (docs/DESIGN.md) with clean context.
 Focus strictly on:
 - Database schema, primary/foreign keys, indexing, and sync_events partitioning.
 - Transactional boundaries, isolation levels, row locks (FOR UPDATE), and cold-start race hazards.
@@ -39,7 +39,7 @@ Focus strictly on:
 - Atomic Checkpoint Windows pagination without batch splitting.
 
 Document:
-[INSERT docs/ARCHITECTURE.md]
+[INSERT docs/DESIGN.md]
 
 Verdict: APPROVED or CHANGES_REQUESTED
 ```
@@ -47,7 +47,7 @@ Verdict: APPROVED or CHANGES_REQUESTED
 ### Judge 2 (Flutter & Client Architect)
 ```text
 You are Judge 2 (Flutter & Client Architect) in the Court of Three Agents.
-Review the attached system architecture document with clean context.
+Review the attached system design document (docs/DESIGN.md) with clean context.
 Focus strictly on:
 - Offline-First client database (Drift/SQLite in background isolate).
 - 16.6ms UI frame budget protection (offloading JSON parsing and 3-way merge to worker isolates).
@@ -55,7 +55,7 @@ Focus strictly on:
 - Sparse Sort Order (2^32 step with localized 10-item window rebalancing).
 
 Document:
-[INSERT docs/ARCHITECTURE.md]
+[INSERT docs/DESIGN.md]
 
 Verdict: APPROVED or CHANGES_REQUESTED
 ```
@@ -63,7 +63,7 @@ Verdict: APPROVED or CHANGES_REQUESTED
 ### Judge 3 (Security & Edge-Case Critic)
 ```text
 You are Judge 3 (Security & Edge-Case Critic) in the Court of Three Agents.
-Review the attached system architecture document with clean context.
+Review the attached system design document (docs/DESIGN.md) with clean context.
 Focus strictly on:
 - IDOR vulnerabilities and ownership verification.
 - Session theft detection during Refresh Token Rotation (RTR).
@@ -72,7 +72,7 @@ Focus strictly on:
 - Undefined states, deadlocks, and silent data loss scenarios.
 
 Document:
-[INSERT docs/ARCHITECTURE.md]
+[INSERT docs/DESIGN.md]
 
 Verdict: APPROVED or CHANGES_REQUESTED
 ```

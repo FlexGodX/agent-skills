@@ -62,7 +62,7 @@ flowchart TD
 
 ### Phase 2: System Design & "Court of Three Agents" (Quality Gate 2)
 - **Objective:** Architect scalable, fault-tolerant backend and reactive client.
-- **Deliverable:** `docs/ARCHITECTURE.md`.
+- **Deliverable:** `docs/DESIGN.md` (system design document: backend, client, security).
 - **Quality Gate 2 (The Court of Three Agents):**
   Spawn 3 independent subagents with clean context:
   1. **Judge 1 (Backend & System Architect):** Evaluates DB schema, transaction boundaries, row-level locks, topological DAG sort, partition schemes, and OCC.

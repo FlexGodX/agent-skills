@@ -48,21 +48,50 @@ flowchart TD
 
 ---
 
-## 3. Phase-by-Phase Execution Guide
+## 3. Artifact Naming Convention
+
+Every artifact produced by the pipeline is a versioned file. Never overwrite an artifact in place — create the next version instead.
+
+```text
+<ARTIFACT-NAME>-<date>-<NN>.md
+```
+
+- **`<ARTIFACT-NAME>`** — UPPER_SNAKE name of the artifact: `GOAL`, `SPECIFICATION`, `DESIGN`, `QA_ARTIFACT`, `IMPLEMENTATION_PLAN`, `RELEASE_NOTES`.
+- **`<date>`** — creation date in ISO form `YYYY-MM-DD`.
+- **`<NN>`** — two-digit sequence number (`01`, `02`, …) that disambiguates artifacts of the same name created **within one day**. Start at `01` on the first artifact of a given day and increment for every subsequent revision of that same artifact on that day. The counter is per artifact name, so different artifacts created on the same day may share the same number (e.g. `GOAL-2026-11-10-01.md` and `DESIGN-2026-11-10-01.md`). On a new day the counter starts again at `01`.
+
+Example:
+
+| Artifact | First artifact of the day | Second artifact of the same day |
+|---|---|---|
+| Goal | `docs/GOAL-2026-11-10-01.md` | `docs/GOAL-2026-11-10-02.md` |
+| Specification | `docs/SPECIFICATION-2026-11-10-01.md` | `docs/SPECIFICATION-2026-11-10-02.md` |
+| Design | `docs/DESIGN-2026-11-10-01.md` | `docs/DESIGN-2026-11-10-02.md` |
+
+Rules:
+1. Phase deliverables and all cross-references (Quality Gate prompts, plans, release notes) must cite the **exact versioned filename**, never an unversioned name like `docs/GOAL.md`.
+2. The highest `<NN>` for an artifact name is the current authoritative version; earlier versions stay untouched as an audit trail.
+3. Quality Gates audit the specific version handed to them and record that filename in their verdict.
+
+Throughout this skill `<date>` and `<NN>` stand for the date and sequence number described above.
+
+---
+
+## 4. Phase-by-Phase Execution Guide
 
 ### Phase 1: Goal Formulation & Functional Specification (Quality Gate 1)
 - **Objective:** Formulate explicit system boundaries, user loops, domain models, and technical specifications based directly on requirements/brief.
 - **Deliverables:**
-  - `docs/GOAL.md`: Global system scope, core invariants, Definition of Done (DoD).
-  - `docs/SPECIFICATION.md`: Entity schemas, temporal mechanics, sync protocol, OCC versioning, 3-way merge rules, IDOR protection, DDL schemas.
+  - `docs/GOAL-<date>-<NN>.md`: Global system scope, core invariants, Definition of Done (DoD).
+  - `docs/SPECIFICATION-<date>-<NN>.md`: Entity schemas, temporal mechanics, sync protocol, OCC versioning, 3-way merge rules, IDOR protection, DDL schemas.
 - **Quality Gate 1 (Clean-Context Auditor):**
   - Spawn subagent (`typeName: "research"`).
-  - Provide *only* `docs/SPECIFICATION.md` and criteria (completeness, security, data integrity, consistency).
+  - Provide *only* `docs/SPECIFICATION-<date>-<NN>.md` and criteria (completeness, security, data integrity, consistency).
   - Loop until `APPROVED`.
 
 ### Phase 2: System Design & "Court of Three Agents" (Quality Gate 2)
 - **Objective:** Architect scalable, fault-tolerant backend and reactive client.
-- **Deliverable:** `docs/DESIGN.md` (system design document: backend, client, security).
+- **Deliverable:** `docs/DESIGN-<date>-<NN>.md` (system design document: backend, client, security).
 - **Quality Gate 2 (The Court of Three Agents):**
   Spawn 3 independent subagents with clean context:
   1. **Judge 1 (Backend & System Architect):** Evaluates DB schema, transaction boundaries, row-level locks, topological DAG sort, partition schemes, and OCC.
@@ -73,10 +102,10 @@ flowchart TD
 ### Phase 3: QA Artifact, Traceability Plan & Quality Gate 3
 - **Objective:** Ensure 100% bidirectional traceability between specification, architecture, and tests before writing code.
 - **Deliverables:**
-  - `docs/QA_ARTIFACT.md`: Complete Acceptance Criteria (`AC-XX`), Unit, Integration, Distributed Sync (`TC-SYNC-XX`), and Stress test scenarios (`STRESS-XX`).
-  - `docs/IMPLEMENTATION_PLAN.md`: Staged task breakdown mapped directly to QA cases.
+  - `docs/QA_ARTIFACT-<date>-<NN>.md`: Complete Acceptance Criteria (`AC-XX`), Unit, Integration, Distributed Sync (`TC-SYNC-XX`), and Stress test scenarios (`STRESS-XX`).
+  - `docs/IMPLEMENTATION_PLAN-<date>-<NN>.md`: Staged task breakdown mapped directly to QA cases.
 - **Quality Gate 3 (Cross-Auditor):**
-  - Verify every single acceptance criteria and edge case in `QA_ARTIFACT.md` maps directly to an implementation step in `IMPLEMENTATION_PLAN.md`.
+  - Verify every single acceptance criteria and edge case in `docs/QA_ARTIFACT-<date>-<NN>.md` maps directly to an implementation step in `docs/IMPLEMENTATION_PLAN-<date>-<NN>.md`.
   - Loop until `APPROVED`.
 
 ### Phase 4: Implementation & Test Verification
@@ -100,10 +129,10 @@ flowchart TD
 3. **Artifact Compilation:**
    - Build native backend binary: `go build -o bin/<service> cmd/<service>/main.go`.
    - Build client bundle: `flutter build bundle` / `flutter build macos` / `flutter build web`.
-4. **Release Notes:** Generate `docs/RELEASE_NOTES.md` documenting verified metrics, DoD checklist, and run instructions.
+4. **Release Notes:** Generate `docs/RELEASE_NOTES-<date>-<NN>.md` documenting verified metrics, DoD checklist, and run instructions.
 
 ---
 
-## 4. Auditor & Judge Prompt Templates
+## 5. Auditor & Judge Prompt Templates
 
 For prompt templates used when invoking clean-context subagents for Quality Gates 1, 2, and 3, refer to [references/auditor_prompts.md](./references/auditor_prompts.md).

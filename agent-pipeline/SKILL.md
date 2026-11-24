@@ -1,17 +1,38 @@
 ---
 name: agent-pipeline
 description: >-
-  Use when a development task arrives that changes behaviour or touches more than
-  one file (new feature, refactoring, bug fix, schema or API change) and AI
-  agents will deliver it; when the user asks for a pipeline, full cycle,
-  spec-first work, SPEC.md / DESIGN.md / QA.md, clean-context review, quality
-  gates, an orchestrator with a subagent per phase; when agent output keeps
-  coming back wrong, unverified or off-requirement. Триггеры: «по пайплайну»,
-  «полный цикл», «сделай качественно», «спецификация», «ревью чистым
-  контекстом», «оркестратор», «субагент на каждую фазу».
+  Opt-in, heavy and slow: do NOT use by default for ordinary development tasks,
+  however large. Use ONLY when the user explicitly asks for it in this request:
+  "run the pipeline", "full cycle", "agent-pipeline", "/agent-pipeline",
+  «по пайплайну», «полный цикл», «запусти пайплайн», «ревью чистым контекстом»,
+  «оркестратор с субагентом на каждую фазу». One exception: when the task
+  changes a database schema or migration, a public API contract, data synced
+  between client and server, or auth / permissions / secrets — do not start the
+  pipeline, but offer it in one line and continue the ordinary way unless the
+  user says yes.
 ---
 
 # Agent Pipeline
+
+## Когда включаться
+
+Скилл дорогой: от пяти запусков субагентов на самой маленькой задаче. Поэтому
+по умолчанию он не работает.
+
+- **Пользователь прямо попросил** («по пайплайну», «полный цикл», «запусти
+  пайплайн», `/agent-pipeline`) — работай по скиллу.
+- **Не просил, но задача рискованная:** меняется схема БД или миграция,
+  контракт публичного API, формат или состав данных между клиентом и
+  сервером, авторизация, права или секреты. Пайплайн не начинай. Напиши одну
+  строку: что именно в задаче рискованно и «запустить пайплайн?». Ответил
+  «да» — работай по скиллу. Ответил «нет», не ответил или недоступен — делай
+  задачу обычным способом и больше не предлагай.
+- **Всё остальное** — скилл не применяй, даже если задача большая или трогает
+  много файлов. Слова «сделай качественно» или «напиши спецификацию» сами по
+  себе пайплайн не включают.
+
+Согласие действует на одну задачу. Следующая задача снова начинается без
+пайплайна.
 
 ## Суть
 

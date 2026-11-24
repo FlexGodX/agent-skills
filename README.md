@@ -10,6 +10,7 @@ Each skill lives in its own folder and contains a `SKILL.md` with YAML frontmatt
 | Skill | Description |
 |---|---|
 | [autonomous-agentic-development-cycle](./autonomous-agentic-development-cycle/) | Zero-interruption engineering pipeline: spec → architecture → QA plan → implementation → release, with clean-context Quality Gates (a single auditor, then a Court of Three Agents) blocking each phase transition. |
+| [agent-pipeline](./agent-pipeline/) | 11-stage task cycle with four review gates, each passed by a single clean-context reviewer agent. Task sizes S/M/L, neighbouring-case and breaking-input checks, tests instead of debate before code. See its README for results and limits. |
 
 ## Install
 

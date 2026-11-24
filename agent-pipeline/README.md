@@ -23,6 +23,25 @@ cp -R agent-pipeline ~/.agents/skills/ && ln -s ../../.agents/skills/agent-pipel
 cp -R agent-pipeline .agents/skills/
 ```
 
+### Установка агентом по ссылке
+
+Дайте агенту ссылку на репозиторий и попросите установить скилл
+`agent-pipeline`. Ему достаточно выполнить:
+
+```bash
+git clone --depth 1 https://github.com/FlexGodX/agent-skills.git /tmp/agent-skills
+mkdir -p ~/.agents/skills ~/.claude/skills
+rm -rf ~/.agents/skills/agent-pipeline
+cp -R /tmp/agent-skills/agent-pipeline ~/.agents/skills/
+ln -sfn ../../.agents/skills/agent-pipeline ~/.claude/skills/agent-pipeline
+python3 ~/.agents/skills/agent-pipeline/scripts/test_check_artifacts.py
+```
+
+Последняя команда проверяет, что скрипт проверки документов работает на этой
+машине: все тесты должны пройти. Папка копируется целиком — `SKILL.md`,
+`references/` и `scripts/` нужны вместе. Скрипту нужен только Python 3.8+,
+сторонних пакетов нет. Чтобы обновить скилл, повторите те же команды.
+
 Скилл срабатывает по описанию (`description` в `SKILL.md`): новая фича,
 рефакторинг, багфикс, изменение схемы или API, а также просьбы вроде «по
 пайплайну», «полный цикл», «спецификация», «ревью чистым контекстом».
@@ -89,11 +108,31 @@ cp -R agent-pipeline .agents/skills/
 ```text
 agent-pipeline/
 ├── SKILL.md                      # цикл, масштаб, правила ревью, этапы, красные флаги
-└── references/
-    ├── artifacts.md              # что внутри SPEC / DESIGN / QA / PLAN / REVIEW
-    ├── phase-prompts.md          # шаблоны запросов исполнителям фаз
-    └── review-prompts.md         # готовые запросы ревьюеру для каждых ворот
+├── references/
+│   ├── artifacts.md              # что внутри SPEC / DESIGN / QA / PLAN / REVIEW
+│   ├── phase-prompts.md          # шаблоны запросов исполнителям фаз
+│   └── review-prompts.md         # готовые запросы ревьюеру для каждых ворот
+└── scripts/
+    ├── check_artifacts.py        # программная проверка документов перед воротами
+    └── test_check_artifacts.py   # тесты скрипта
 ```
+
+## Скрипт проверки документов
+
+Перед каждыми воротами оркестратор запускает:
+
+```bash
+python3 scripts/check_artifacts.py docs/pipeline/perf-3-web-load --gate 6
+```
+
+Ворота: `3`, `4`, `6`, `10` и `s` (ревью до кода при размере S). Скрипт
+проверяет то, для чего не нужно суждение: шапки и обязательные разделы,
+статусы входящих документов, трассируемость «критерий → тест → шаг плана»,
+таблицы «Входы из ревью», «Прогон» и «Мутации». Ответ — строка итога (`OK …`
+или `НЕ ПРОЙДЕНО …`) и по строке на ошибку; код возврата 0 или 1. Так
+ревьюер не тратит токены на механику, а случай «запущена треть тестов»
+ловится до ревью. Смысл требований скрипт не проверяет и ревьюера не
+заменяет.
 
 ## Происхождение
 
